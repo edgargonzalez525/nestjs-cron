@@ -18,7 +18,10 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "docker:build": "docker build -t nestjs-cron .",
+    "docker": "npm run docker:delete -f && npm run docker:build && docker run --name nestjs-cron -p 3000:3000 nestjs-cron",
+    "docker:delete": "docker rm $(docker ps -a -q) -f"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
