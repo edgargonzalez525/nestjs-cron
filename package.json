@@ -19,8 +19,13 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "docker:build": "docker build -t nestjs-cron .",
-    "docker": "npm run docker:delete -f && npm run docker:build && docker run --name nestjs-cron -p 3000:3000 nestjs-cron",
+    "aws:login": "aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin <ID>.dkr.ecr.us-west-2.amazonaws.com/nestjs",
+    "aws:deploy": "npm run aws:build && aws ecs update-service --cluster test-cluster --service nestjs-service --force-new-deployment --region=<YOUR_REGION>",
+    "aws:build": "npm run aws:login && npm run docker:build && npm run docker:tag && npm run docker:push",
+    "docker:build": "docker build -t nestjs .",
+    "docker:tag": "docker tag nestjs:latest <ID>.dkr.ecr.us-west-2.amazonaws.com/nestjs:latest",
+    "docker:push": "docker push <ID>.dkr.ecr.us-west-2.amazonaws.com/nestjs:latest",
+    "docker:local": "npm run docker:delete -f && npm run docker:build && docker run --name nestjs -p 3000:3000 nestjs",
     "docker:delete": "docker rm $(docker ps -a -q) -f"
   },
   "dependencies": {
